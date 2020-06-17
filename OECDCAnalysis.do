@@ -1,5 +1,5 @@
 * RA test
-cd "C:\Users\david\Dropbox\work opportunities\peruFirstOpportunity\RA David Cornejo\for_candidates"
+cd "add path"
 log using "raTest.smcl", replace
 * Importing the dataset
 import delimited using "BERD_input.csv", clear 
