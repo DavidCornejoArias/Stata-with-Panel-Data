@@ -57,49 +57,8 @@ egen coAndIndNum = group( coAndInd )
 *ssc install estout, replace
 *Regressions
 eststo: regress logbusrd loggovrd
-* adding one year log
-eststo:xtreg logbusrd L.loggovrd loggovrd
-* Adding year fix effects
-eststo:xtreg logbusrd L.loggovrd i.year, fe
 * adding more than individual and time effects
 xtset coAndIndNumber year, yearly
 eststo:xtreg logbusrd loggovrd, fe
 esttab
-* Different variables
-eststo clear
-gen difLogBusrd = d.logbusrd
-gen difLoggovrd = d.loggovrd
-gen difYear = d.year
-* Regress
-eststo: regress difLogBusrd difLoggovrd
-* adding one year log
-eststo:xtreg difLogBusrd L.difLoggovrd difLoggovrd
-* Adding year fix effects
-eststo:xtreg difLogBusrd L.difLoggovrd i.year, fe
-* adding more than individual and time effects
-xtset coAndIndNumber year, yearly
-eststo:xtreg logbusrd loggovrd, fe
-esttab
-save "resultsLaterOnTheTest.dta", replace
-* sum govrd by country and Industry
-statsby sum=r(sum) n=r(N), by(coAndIndNumber) subsets nodots: summarize govrd
-* Generating the average
-gen average = sum / n
-save "other.dta", replace
-* Reading the other dta
-use "C:\Users\david\Desktop\Stata14\resultsLaterOnTheTest.dta", replace
-* Adding an average
-merge m:1 coAndIndNumber using "other.dta"
-save "secondMerge.dta", replace
-use "secondMerge.dta", replace
-*adding an IV variable
-gen IV = average* difLoggovrd
-* Regressions with an IV variable
-eststo clear
-xtset coAndIndNumber year, yearly
-eststo: xtivreg difLogBusrd (difLoggovrd = IV), fe
-eststo:xtivreg difLogBusrd (difLoggovrd = IV), fe
-esttab
-
-*
 
